@@ -1,7 +1,13 @@
 package com.hedvig
 
-import com.hedvig.repository.EventsRepository
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
 
-fun main() {
-    EventsRepository().findAll()
+@SpringBootApplication
+//@EnableAutoConfiguration
+open class EventsApplication
+
+fun main(args: Array<String>) {
+    runApplication<EventsApplication>(*args)
 }
+
