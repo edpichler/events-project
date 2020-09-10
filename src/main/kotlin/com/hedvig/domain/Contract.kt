@@ -6,28 +6,28 @@ import java.time.Month
 data class Contract (val id: String) {
 
     private var events = mutableListOf<Event>()
-    var active = false
     var premium = 0
     var activationDate   : LocalDate? = null
-    var deactivationDate : LocalDate? = null
+    var expirationdate   : LocalDate? = null
 
     fun addEvent(evt: Event) {
         events.add(evt)
         when(evt::class) {
             ContractCreatedEvent::class -> {
-                active = true
                 activationDate = evt.atDate
                 premium = evt.amount
             }
             ContractTerminatedEvent::class -> {
-                active = false
-                deactivationDate = evt.atDate
+                expirationdate = evt.atDate
+                while (expirationdate!!.dayOfMonth != activationDate!!.dayOfMonth) {
+                        expirationdate = expirationdate!!.plusDays(1)
+                }
             }
         }
     }
 
     fun wasActiveAtMonth(month: Month) : Boolean{
-        return activationDate != null
-                && activationDate!!.monthValue <= month.value && (deactivationDate == null || deactivationDate!!.monthValue > month.value);
+        return activationDate != null && activationDate!!.monthValue <= month.value
+                && (expirationdate == null || expirationdate!!.monthValue >= month.value);
     }
 }

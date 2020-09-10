@@ -8,7 +8,7 @@ class ContractModel(events: List<Event>) {
     val contracts = mutableMapOf<String, Contract>()
 
     init {
-        events.forEach { this.newEvent(it) }
+        events.sortedBy { it.atDate }.forEach { this.newEvent(it) }
     }
 
     fun newEvent(evt: Event) {

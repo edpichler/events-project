@@ -1,9 +1,7 @@
 package com.hedvig.repository
 
-import com.hedvig.domain.ContractCreatedEvent
 import com.hedvig.domain.Event
 import java.io.File
-import java.time.LocalDate
 
 class EventsRepository {
     private val eventParser = EventParser();
