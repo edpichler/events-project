@@ -1,16 +1,14 @@
 package com.hedvig.model
 
-import com.hedvig.controller.Task1
 import com.hedvig.domain.ContractCreatedEvent
 import com.hedvig.domain.ContractTerminatedEvent
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 
 import java.time.LocalDate
 import java.time.Month
 
-internal class Task1Test {
+internal class ContractModelTest {
 
     companion object
     {
@@ -27,8 +25,8 @@ internal class Task1Test {
 
     @Test
     fun getNumberContracts() {
-        val task1Model = Task1(events)
-        val activeContracts = task1Model.getActiveContracts()
+        val contractModel = ContractModel(events)
+        val activeContracts = contractModel.getActiveContracts()
         assertThat(activeContracts.getValue(januaryDate.month).size).isEqualTo(1);
         assertThat(activeContracts.getValue(februaryDate.month).size).isEqualTo(2);
         assertThat(activeContracts.getValue(marchDate.month).size).isEqualTo(1);
@@ -36,8 +34,8 @@ internal class Task1Test {
 
     @Test
     fun agwp() {
-        val task1Model = Task1(events)
-        val agwp = task1Model.getAGWP()
+        val contractModel = ContractModel(events)
+        val agwp = contractModel.getAGWP()
         assertThat(agwp.getValue(januaryDate.month)).isEqualTo(100);
         assertThat(agwp.getValue(februaryDate.month)).isEqualTo(300);
         assertThat(agwp.getValue(marchDate.month)).isEqualTo(400);
@@ -47,8 +45,8 @@ internal class Task1Test {
 
     @Test
     fun egwp() {
-        val task1Model = Task1(events)
-        val egwp = task1Model.getEGWP()
+        val contractModel = ContractModel(events)
+        val egwp = contractModel.getEGWP()
         assertThat(egwp.getValue(januaryDate.month)).isEqualTo(1200);
         assertThat(egwp.getValue(februaryDate.month)).isEqualTo(2300);
         assertThat(egwp.getValue(marchDate.month)).isEqualTo(400 + 900);
