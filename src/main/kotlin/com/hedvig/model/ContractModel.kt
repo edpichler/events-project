@@ -4,7 +4,7 @@ import com.hedvig.domain.Contract
 import com.hedvig.domain.Event
 import java.time.Month
 
-class ContractModel(events: ArrayList<Event>) {
+class ContractModel(events: List<Event>) {
     val contracts = mutableMapOf<String, Contract>()
 
     init {
