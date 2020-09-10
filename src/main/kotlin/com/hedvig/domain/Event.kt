@@ -2,16 +2,20 @@ package com.hedvig.domain
 
 import java.time.LocalDate
 
-interface Event {
+interface Event : Comparable<Event> {
     val contratId: String
     val atDate: LocalDate
     val amount:  Int
+
+    override fun compareTo(other: Event): Int {
+        return this.atDate.compareTo(other.atDate)
+    }
 }
 
 data class ContractCreatedEvent(
         override val contratId: String,
         val premium: Int,
-        val startDate: LocalDate): Event{
+        var startDate: LocalDate): Event{
 
     override val atDate: LocalDate
         get() = startDate
