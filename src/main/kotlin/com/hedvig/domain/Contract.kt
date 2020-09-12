@@ -19,15 +19,12 @@ data class Contract (val id: String) {
             }
             ContractTerminatedEvent::class -> {
                 expirationdate = evt.atDate
-                while (expirationdate!!.dayOfMonth != activationDate!!.dayOfMonth) {
-                        expirationdate = expirationdate!!.plusDays(1)
-                }
             }
         }
     }
 
     fun wasActiveAtMonth(month: Month) : Boolean{
         return activationDate != null && activationDate!!.monthValue <= month.value
-                && (expirationdate == null || expirationdate!!.monthValue >= month.value);
+                && (expirationdate == null || expirationdate!!.monthValue > month.value);
     }
 }
