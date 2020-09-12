@@ -26,16 +26,22 @@ class ContractModel(events: List<Event>) {
         agwp.keys.forEach { month ->
             val currentAGWP          = getAGWP().getValue(month)
             val remainingNextMonths  = Month.DECEMBER.value - month.value
-            val forecasted           = sumPremium(getActiveContracts().getValue(month))
+            val forecasted           = sumPremiumInitial(getActiveContracts().getValue(month))
             val value = currentAGWP + (remainingNextMonths * forecasted)
             egwp.put(month, value)
         }
         return egwp
     }
 
-    private fun sumPremium(contracts: List<Contract>): Int {
+    private fun sumPremiumInitial(contracts: List<Contract>): Int {
         var sum = 0
-        contracts.map { sum += it.premium }
+        contracts.forEach { sum += it.initialPremium }
+        return sum;
+    }
+
+    private fun sumPremiumUpdated(contracts: List<Contract>, month: Month): Int {
+        var sum = 0
+        contracts.forEach { sum += it.premiumAt(month) }
         return sum;
     }
 
@@ -64,14 +70,27 @@ class ContractModel(events: List<Event>) {
     fun getAGWP(): Map<Month, Int> {
         val agwp = mutableMapOf<Month, Int>()
         Month.values().forEach { month ->
-            var monthAmount = 0
-            getActiveContracts()[month]?.forEach { monthAmount += it.premium}
+            val accumulatedAmount = if (month.equals(Month.JANUARY)) 0 else agwp.getValue(Month.of(month.value - 1))
 
-            if (!month.equals( Month.JANUARY)) {
-                monthAmount += agwp.get(Month.of(month.value - 1))!!
-            }
-            agwp.put(month, monthAmount)
+            var monthAmount =  sumPremiumInitial(getActiveContracts().getValue(month))
+
+            agwp.put(month, monthAmount + accumulatedAmount)
         }
         return agwp;
+    }
+
+    /**
+     * Accumulated premium considering all events.
+     */
+    fun getAGWPFull(): Map<Month, Int> {
+        val agwpFull = mutableMapOf<Month, Int>()
+        Month.values().forEach { month ->
+            val accumulatedAmount = if (month.equals(Month.JANUARY)) 0 else agwpFull.getValue(Month.of(month.value - 1))
+
+            var monthAmount =  sumPremiumUpdated(getActiveContracts().getValue(month), month)
+
+            agwpFull.put(month, monthAmount + accumulatedAmount)
+        }
+        return agwpFull;
     }
 }

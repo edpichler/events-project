@@ -6,7 +6,7 @@ import java.time.Month
 data class Contract (val id: String) {
 
     private var events = mutableListOf<Event>()
-    var premium = 0
+    var initialPremium = 0
     var activationDate   : LocalDate? = null
     var expirationdate   : LocalDate? = null
 
@@ -15,12 +15,28 @@ data class Contract (val id: String) {
         when(evt::class) {
             ContractCreatedEvent::class -> {
                 activationDate = evt.atDate
-                premium = evt.amount
+                initialPremium = evt.amount
             }
             ContractTerminatedEvent::class -> {
                 expirationdate = evt.atDate
             }
         }
+    }
+
+    fun premiumAt(month: Month) : Int {
+        var premium = initialPremium
+        events.filter{ it.atDate.monthValue <= month.value
+                       && (it is PriceIncreasedEvent || it is PriceDecreaseEvent )}.forEach {
+            when(it::class) {
+                PriceIncreasedEvent::class -> {
+                   premium += it.amount
+                }
+                PriceDecreaseEvent::class -> {
+                  premium -= it.amount
+                }
+            }
+        }
+        return premium;
     }
 
     fun wasActiveAtMonth(month: Month) : Boolean{
