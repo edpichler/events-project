@@ -17,7 +17,7 @@ class ContractModel(events: List<Event>) {
     }
 
     /**
-     * Expected premium for the whole year.
+     * Expected premium for the whole year not considering the premium event updates.
      */
     fun getEGWP(): Map<Month, Int> {
         val agwp = getAGWP()
@@ -26,11 +26,28 @@ class ContractModel(events: List<Event>) {
         agwp.keys.forEach { month ->
             val currentAGWP          = getAGWP().getValue(month)
             val remainingNextMonths  = Month.DECEMBER.value - month.value
-            val forecasted           = sumPremiumInitial(getActiveContracts().getValue(month))
-            val value = currentAGWP + (remainingNextMonths * forecasted)
-            egwp.put(month, value)
+            val activePremiumAt       = sumPremiumInitial(getActiveContracts().getValue(month))
+            val forecasted = currentAGWP + (remainingNextMonths * activePremiumAt)
+            egwp.put(month, forecasted)
         }
         return egwp
+    }
+
+    /**
+     * Expected premium for the whole year the premium event updates.
+     */
+    fun getEGWPFull(): Map<Month, Int> {
+        val agwpFull = getAGWPFull()
+        val egwpFull = mutableMapOf<Month, Int>()
+
+        agwpFull.keys.forEach { month ->
+            val currentAGWPFull          = getAGWPFull().getValue(month)
+            val remainingNextMonths      = Month.DECEMBER.value - month.value
+            val activePremiumsAt         = sumPremiumUpdated(getActiveContracts().getValue(month), month)
+            val forecasted = currentAGWPFull + (remainingNextMonths * activePremiumsAt)
+            egwpFull.put(month, forecasted)
+        }
+        return egwpFull
     }
 
     private fun sumPremiumInitial(contracts: List<Contract>): Int {
@@ -43,14 +60,6 @@ class ContractModel(events: List<Event>) {
         var sum = 0
         contracts.forEach { sum += it.premiumAt(month) }
         return sum;
-    }
-
-    fun getAccumulatedAGWP(month: Month): Int {
-        var sum = 0
-        getAGWP().filter { it.key.value <= month.value }.forEach {
-            sum += it.value
-        }
-        return sum
     }
 
     fun getActiveContracts(): Map <Month, List<Contract>> {

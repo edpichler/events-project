@@ -81,6 +81,8 @@ internal class ContractModelTest {
         assertThat(agwpFull.getValue(Month.MAY)).isEqualTo(450)
         assertThat(agwpFull.getValue(Month.JUNE)).isEqualTo(550)
         assertThat(agwpFull.getValue(Month.JULY)).isEqualTo(650)
+        assertThat(agwpFull.getValue(Month.SEPTEMBER)).isEqualTo(850)
+        assertThat(agwpFull.getValue(Month.OCTOBER)).isEqualTo(850)
 
     }
 
@@ -93,6 +95,21 @@ internal class ContractModelTest {
         assertThat(egwp.getValue(Month.MARCH)).isEqualTo(200)
         assertThat(egwp.getValue(Month.APRIL)).isEqualTo(1100)
         assertThat(egwp.getValue(Month.MAY)).isEqualTo(1100)
+    }
+
+    @Test
+    fun egwpFullTest() {
+
+        val egwpFull = contractModel.getEGWPFull()
+        assertThat(egwpFull.getValue(Month.JANUARY)).isEqualTo(1200)
+        assertThat(egwpFull.getValue(Month.FEBRUARY)).isEqualTo(1200)
+        assertThat(egwpFull.getValue(Month.MARCH)).isEqualTo(200)
+        assertThat(egwpFull.getValue(Month.APRIL)).isEqualTo(1100)
+        assertThat(egwpFull.getValue(Month.MAY)).isEqualTo(1500)
+        assertThat(egwpFull.getValue(Month.JUNE)).isEqualTo(1150)
+        assertThat(egwpFull.getValue(Month.SEPTEMBER)).isEqualTo(1150)
+        assertThat(egwpFull.getValue(Month.OCTOBER)).isEqualTo(850)
+        assertThat(egwpFull.getValue(Month.NOVEMBER)).isEqualTo(850)
     }
 
     companion object {
