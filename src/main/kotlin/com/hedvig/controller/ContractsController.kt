@@ -7,21 +7,26 @@ import org.springframework.web.bind.annotation.RestController
 import java.time.Month
 
 @RestController
-class HtmlController {
+class ContractsController {
 
     private val contractModel = ContractModel(EventsRepository().findAll())
 
     @GetMapping("/")
     fun render() : String{
-        return tableTask1() + "<p/>" + tableTask2()
+        return " <head>" +
+                "<link rel=\"stylesheet\" href=\"https://unpkg.com/purecss@2.0.3/build/pure-min.css\" integrity=\"sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ\" crossorigin=\"anonymous\">" +
+                "</head>" +
+                "<body>" +
+                "${renderTask1()} <p/> ${renderTask2()}" +
+                "</body>"
     }
 
-    private fun tableTask1(): String {
+    private fun renderTask1(): String {
         val activeContracts = contractModel.getActiveContracts()
         val agwp = contractModel.getAGWP()
         val egwp = contractModel.getEGWP()
         return """
-            <table>
+            <table class="pure-table">
                 <thead> 
                     <tr>
                         <th colspan="13">Task 1</th>
@@ -43,7 +48,7 @@ class HtmlController {
                         <td>November</td>
                         <td>December</td>
                     </tr>
-                    <tr style="text-align: center;">
+                    <tr style="text-align: right;">
                         <td>Number of contracts</td>
                         <td>${activeContracts.getValue(Month.JANUARY).size}</td>
                         <td>${activeContracts.getValue(Month.FEBRUARY).size}</td>
@@ -58,7 +63,7 @@ class HtmlController {
                         <td>${activeContracts.getValue(Month.NOVEMBER).size}</td>
                         <td>${activeContracts.getValue(Month.DECEMBER).size}</td>
                     </tr>
-                    <tr style="text-align: center;">
+                    <tr style="text-align: right;">
                         <td>AGWP</td>
                         <td>${agwp.getValue(Month.JANUARY)}</td>
                         <td>${agwp.getValue(Month.FEBRUARY)}</td>
@@ -73,7 +78,7 @@ class HtmlController {
                         <td>${agwp.getValue(Month.NOVEMBER)}</td>
                         <td>${agwp.getValue(Month.DECEMBER)}</td>
                     </tr>
-                    <tr style="text-align: center;">
+                    <tr style="text-align: right;">
                         <td>EGWP</td>
                         <td>${egwp.getValue(Month.JANUARY)}</td>
                         <td>${egwp.getValue(Month.FEBRUARY)}</td>
@@ -93,12 +98,12 @@ class HtmlController {
         """
     }
 
-    private fun tableTask2(): String {
+    private fun renderTask2(): String {
         val activeContracts = contractModel.getActiveContracts()
         val agwpFull = contractModel.getAGWPFull()
         val egwpFull = contractModel.getEGWPFull()
         return """
-            <table>
+            <table class="pure-table">
                 <thead> 
                     <tr>
                         <th colspan="13">Task 2</th>
@@ -120,7 +125,7 @@ class HtmlController {
                         <td>November</td>
                         <td>December</td>
                     </tr>
-                    <tr style="text-align: center;">
+                    <tr style="text-align: right;">
                         <td>Number of contracts</td>
                         <td>${activeContracts.getValue(Month.JANUARY).size}</td>
                         <td>${activeContracts.getValue(Month.FEBRUARY).size}</td>
@@ -135,7 +140,7 @@ class HtmlController {
                         <td>${activeContracts.getValue(Month.NOVEMBER).size}</td>
                         <td>${activeContracts.getValue(Month.DECEMBER).size}</td>
                     </tr>
-                    <tr style="text-align: center;">
+                    <tr style="text-align: right;">
                         <td>AGWP</td>
                         <td>${agwpFull.getValue(Month.JANUARY)}</td>
                         <td>${agwpFull.getValue(Month.FEBRUARY)}</td>
@@ -150,7 +155,7 @@ class HtmlController {
                         <td>${agwpFull.getValue(Month.NOVEMBER)}</td>
                         <td>${agwpFull.getValue(Month.DECEMBER)}</td>
                     </tr>
-                    <tr style="text-align: center;">
+                    <tr style="text-align: right;">
                         <td>EGWP</td>
                         <td>${egwpFull.getValue(Month.JANUARY)}</td>
                         <td>${egwpFull.getValue(Month.FEBRUARY)}</td>
