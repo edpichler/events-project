@@ -3,7 +3,7 @@ package com.hedvig.domain
 import java.time.LocalDate
 
 interface Event : Comparable<Event> {
-    val contratId: String
+    val contractId: String
     val atDate: LocalDate
     val amount:  Int
 
@@ -13,7 +13,7 @@ interface Event : Comparable<Event> {
 }
 
 data class ContractCreatedEvent(
-        override val contratId: String,
+        override val contractId: String,
         val premium: Int,
         var startDate: LocalDate): Event{
 
@@ -25,7 +25,7 @@ data class ContractCreatedEvent(
 }
 
 data class PriceIncreasedEvent(
-        override val contratId: String,
+        override val contractId: String,
         val premiumIncrease: Int,
         override val atDate: LocalDate): Event{
 
@@ -34,7 +34,7 @@ data class PriceIncreasedEvent(
 }
 
 data class PriceDecreaseEvent(
-        override val contratId: String,
+        override val contractId: String,
         val premiumReduction: Int,
         override val atDate: LocalDate): Event{
 
@@ -43,7 +43,7 @@ data class PriceDecreaseEvent(
 }
 
 data class ContractTerminatedEvent(
-        override val contratId: String,
+        override val contractId: String,
         val terminationDate: LocalDate): Event {
 
     override val atDate: LocalDate

@@ -3,24 +3,29 @@ package com.hedvig.domain
 import java.time.LocalDate
 import java.time.Month
 
-data class Contract (val id: String) {
-
+data class Contract (private val evt: ContractCreatedEvent) {
+    val id : String = evt.contractId
+    val initialPremium : Int = evt.premium
+    private val activationDate  : LocalDate = evt.startDate
     private var events = mutableListOf<Event>()
-    var initialPremium = 0
-    var activationDate   : LocalDate? = null
-    var expirationdate   : LocalDate? = null
+
+    init {
+        addEvent(evt)
+    }
+
+    private var expirationDate   : LocalDate? = null
 
     fun addEvent(evt: Event) {
-        events.add(evt)
+
         when(evt::class) {
             ContractCreatedEvent::class -> {
-                activationDate = evt.atDate
-                initialPremium = evt.amount
+                if (events.isNotEmpty()) throw Exception("This contract already has a ${evt::class} event.")
             }
             ContractTerminatedEvent::class -> {
-                expirationdate = evt.atDate
+                expirationDate = evt.atDate
             }
         }
+        events.add(evt)
     }
 
     fun premiumAt(month: Month) : Int {
@@ -36,11 +41,11 @@ data class Contract (val id: String) {
                 }
             }
         }
-        return premium;
+        return premium
     }
 
     fun wasActiveAtMonth(month: Month) : Boolean{
-        return activationDate != null && activationDate!!.monthValue <= month.value
-                && (expirationdate == null || expirationdate!!.monthValue > month.value);
+        return  activationDate.monthValue <= month.value
+                && (expirationDate == null || expirationDate!!.monthValue > month.value)
     }
 }

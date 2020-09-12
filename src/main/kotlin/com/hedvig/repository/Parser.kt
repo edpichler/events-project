@@ -10,9 +10,7 @@ class EventParser {
 
     fun parse(line: String): Event {
 
-        val value = parseString("name", line)
-
-        when(value) {
+        when(parseString("name", line)) {
             "ContractCreatedEvent" -> {
                 return ContractCreatedEvent(parseString("contractId", line),
                         parseInt("premium", line),
@@ -34,7 +32,7 @@ class EventParser {
             }
         }
 
-        return ContractCreatedEvent("", 0, LocalDate.now());
+        return ContractCreatedEvent("", 0, LocalDate.now())
     }
 
     private fun parseLocalDate(attribute: String, line: String): LocalDate {

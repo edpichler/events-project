@@ -9,14 +9,14 @@ import java.time.Month
 @RestController
 class HtmlController {
 
-    val contractModel = ContractModel(EventsRepository().findAll());
+    private val contractModel = ContractModel(EventsRepository().findAll())
 
     @GetMapping("/")
     fun render() : String{
         return tableTask1() + "<p/>" + tableTask2()
     }
 
-    fun tableTask1(): String {
+    private fun tableTask1(): String {
         val activeContracts = contractModel.getActiveContracts()
         val agwp = contractModel.getAGWP()
         val egwp = contractModel.getEGWP()
@@ -93,7 +93,7 @@ class HtmlController {
         """
     }
 
-    fun tableTask2(): String {
+    private fun tableTask2(): String {
         val activeContracts = contractModel.getActiveContracts()
         val agwpFull = contractModel.getAGWPFull()
         val egwpFull = contractModel.getEGWPFull()

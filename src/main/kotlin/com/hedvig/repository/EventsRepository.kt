@@ -4,12 +4,12 @@ import com.hedvig.domain.Event
 import java.io.File
 
 class EventsRepository {
-    private val eventParser = EventParser();
+    private val eventParser = EventParser()
 
     fun findAll():List<Event> {
         val events = mutableListOf<Event>()
         File(this.javaClass.getResource("/test-data.txt").toURI()).forEachLine {
-            val event = eventParser.parse(it);
+            val event = eventParser.parse(it)
             try {
                 events.add(event)
             } catch (t: Throwable) {
@@ -18,6 +18,6 @@ class EventsRepository {
             }
         }
 
-        return events;
+        return events
     }
 }

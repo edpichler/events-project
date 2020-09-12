@@ -34,8 +34,8 @@ internal class ContractModelTest {
     @Test
     fun isActiveTest() {
 
-        val contract1 = contractModel.getActiveContracts().getValue(Month.JANUARY).filter { it.id.equals("1") }.first()
-        val contract2 = contractModel.getActiveContracts().getValue(Month.FEBRUARY).filter { it.id.equals("2") }.first()
+        val contract1 = contractModel.getActiveContracts().getValue(Month.JANUARY).first { it.id.equals("1") }
+        val contract2 = contractModel.getActiveContracts().getValue(Month.FEBRUARY).first { it.id.equals("2") }
         assertThat(contract1.wasActiveAtMonth(Month.FEBRUARY)).isFalse
         assertThat(contract2.wasActiveAtMonth(Month.FEBRUARY)).isTrue
         assertThat(contract1.wasActiveAtMonth(Month.MARCH)).isFalse
@@ -119,7 +119,7 @@ internal class ContractModelTest {
             return LocalDate.now().withMonth(month.value)
         }
         private fun createDate(month: Month, day: Int): LocalDate {
-            return createDate(month).withDayOfMonth(day);
+            return createDate(month).withDayOfMonth(day)
         }
 
     }

@@ -1,19 +1,26 @@
 package com.hedvig.model
 
 import com.hedvig.domain.Contract
+import com.hedvig.domain.ContractCreatedEvent
 import com.hedvig.domain.Event
 import java.time.Month
 
 class ContractModel(events: List<Event>) {
-    val contracts = mutableMapOf<String, Contract>()
+    private val contracts = mutableSetOf<Contract>()
 
     init {
         events.sortedBy { it.atDate }.forEach { this.newEvent(it) }
     }
 
-    fun newEvent(evt: Event) {
-        val contract = contracts.getOrPut(evt.contratId) { Contract(evt.contratId)}
-        contract.addEvent(evt)
+    private fun newEvent(evt: Event) {
+        if (evt is ContractCreatedEvent) {
+            if (contracts.count { it.id.equals(evt.contractId) } > 0) {
+                throw Exception("Event inconsistent. The contract ${evt.contractId} was already created.")
+            }
+            contracts.add(Contract(evt))
+        } else {
+            contracts.find { it.id.equals(evt.contractId) }?.addEvent(evt) ?: throw Exception ("Contract not found: ${evt.contractId}")
+        }
     }
 
     /**
@@ -53,24 +60,24 @@ class ContractModel(events: List<Event>) {
     private fun sumPremiumInitial(contracts: List<Contract>): Int {
         var sum = 0
         contracts.forEach { sum += it.initialPremium }
-        return sum;
+        return sum
     }
 
     private fun sumPremiumUpdated(contracts: List<Contract>, month: Month): Int {
         var sum = 0
         contracts.forEach { sum += it.premiumAt(month) }
-        return sum;
+        return sum
     }
 
     fun getActiveContracts(): Map <Month, List<Contract>> {
 
         val activesMap = mutableMapOf<Month, List<Contract>>()
         Month.values().forEach { month ->
-            val actives = this.contracts.filter{ it.value.wasActiveAtMonth(month)}.mapValues { it.value }.values
+            val actives = this.contracts.filter{ it.wasActiveAtMonth(month)}
 
             activesMap.put(month, actives.toList())
         }
-        return activesMap;
+        return activesMap
     }
 
     /**
@@ -81,11 +88,11 @@ class ContractModel(events: List<Event>) {
         Month.values().forEach { month ->
             val accumulatedAmount = if (month.equals(Month.JANUARY)) 0 else agwp.getValue(Month.of(month.value - 1))
 
-            var monthAmount =  sumPremiumInitial(getActiveContracts().getValue(month))
+            val monthAmount =  sumPremiumInitial(getActiveContracts().getValue(month))
 
             agwp.put(month, monthAmount + accumulatedAmount)
         }
-        return agwp;
+        return agwp
     }
 
     /**
@@ -96,10 +103,10 @@ class ContractModel(events: List<Event>) {
         Month.values().forEach { month ->
             val accumulatedAmount = if (month.equals(Month.JANUARY)) 0 else agwpFull.getValue(Month.of(month.value - 1))
 
-            var monthAmount =  sumPremiumUpdated(getActiveContracts().getValue(month), month)
+            val monthAmount =  sumPremiumUpdated(getActiveContracts().getValue(month), month)
 
             agwpFull.put(month, monthAmount + accumulatedAmount)
         }
-        return agwpFull;
+        return agwpFull
     }
 }
