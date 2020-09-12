@@ -36,3 +36,6 @@ compileTestKotlin {
 test {
     useJUnitPlatform()
 }
+bootBuildImage {
+    imageName = "edpichler/${project.name}"
+}

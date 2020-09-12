@@ -23,7 +23,7 @@ jobs:
           find . -name Dockerfile
       - run: ./gradlew build bootBuildImage
       - run: docker images list
-      - run: docker push hedvig-test
+      - run: docker push edpichler/hedvig-test
 
 workflows:
   version: 2
